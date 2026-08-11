@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NITO LIBRARY</title>
+    <link rel="icon" type="image/jpg" href="nitoicon.jpg">
+</head>
+
+<body>
+        <nav id="site-nav" class="site-nav">
+            <div class="site-nav-inner">
+                <span class="site-nav-brand">Nito Library</span>
+                <div class="site-nav-links">
+                    <button class="nav-link active" data-nav="home">Home</button>
+                    <button class="nav-link" data-nav="education">Educational Books</button>
+                    <button class="nav-link" data-nav="juvenile_fiction">Kids Books</button>
+                    <button class="nav-link" data-nav="children">Ages 6-12</button>
+                    <button class="nav-link" data-nav="fiction">Novels</button>
+                    <button class="nav-link" data-nav="short_stories">Story Books</button>
+                    <button class="nav-link" data-nav="horror">Horror Books</button>
+                    <button class="nav-link" data-nav="religion">Religion</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="site-header-row">
+                <h1>Nito library</h1>
+            </div>
+            <p id="site-intro">welcome to nito library made to help you in the search for knowledge ,information and understanding </p>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="search for books.." />
+                <button id="search-button">search</button>
+            </div>
+
+            <!-- Home page: about the site + credits, shown instead of book listings -->
+            <div id="home-about" class="home-about">
+                <div class="home-about-card">
+                    <h2>What Nito Library Is</h2>
+                    <p>Nito Library is a free online library where anyone can search for books and read them directly in the browser &mdash; no sign-up, no downloads. Browse educational books, kids' books, novels, story books, horror, religious texts, and more, right from the menu above.</p>
+                    <p>Every book opens instantly in a full-page reader &mdash; flip through the real scanned pages via Internet Archive, or switch to a guaranteed-working full text of public-domain titles via Project Gutenberg. Nito AI, the built-in chat assistant, is on hand to help you understand what you're reading.</p>
+                </div>
+                <div class="home-about-card">
+                    <h2>Credits</h2>
+                    <p>Built by Michael Zulu, in partnership with Kelimich Limited.</p>
+                    <p>To God be the glory.</p>
+                    <p>Book data and reading access provided by Open Library, Internet Archive, and Project Gutenberg.</p>
+                </div>
+            </div>
+
+            <h2 id="page-heading" class="page-heading" style="display:none;"></h2>
+            <div id="categories-container"></div>
+            <div id="books-container"></div>
+            <footer>
+                <p>NITO LIBRARY by Michael Zulu</p>
+            </footer>
+        </div>
+
+
+        <!-- book detail modal -->
+        <div id="book-modal" class="modal-overlay">
+            <div class="modal-box">
+                <button id="modal-close" class="modal-close">&times;</button>
+
+                <!-- Book Details View -->
+                <div id="modal-details-view" class="modal-content">
+                    <img id="modal-cover" src="" alt="" />
+                    <div class="modal-info">
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-author"></p>
+                        <p id="modal-description"></p>
+                        <div class="modal-read-options">
+                            <button id="modal-read-btn" class="modal-read-btn">&#128214; Flip Page</button>
+                            <button id="modal-text-btn" class="modal-read-btn modal-text-btn">&#128196; Text Only</button>
+                            <button id="modal-listen-btn" class="modal-read-btn modal-listen-btn">&#128264; Read Aloud</button>
+                        </div>
+                        <a id="modal-link" href="#" target="_blank" class="modal-link">View full details on Open
+                            Library</a>
+                    </div>
+                </div>
+
+                <!-- Book Reader View -->
+                <div id="modal-reader-wrap" class="modal-reader-wrap">
+                    <div class="reader-header">
+                        <button id="modal-back-btn" class="modal-back-btn">&larr; Back to details</button>
+                        <div class="reader-mode-tabs">
+                            <button id="modal-mode-flip-btn" class="reader-mode-tab">&#128214; Flip Page</button>
+                            <button id="modal-mode-text-btn" class="reader-mode-tab">&#128196; Text Only</button>
+                            <button id="reader-listen-btn" class="reader-mode-tab reader-listen-btn">&#128264; Read Aloud</button>
+                        </div>
+                    </div>
+
+                    <div id="modal-preview-notice" class="modal-preview-notice">
+                        <span id="modal-preview-notice-text">This is a limited preview &mdash; some pages are omitted.</span>
+                        <button id="modal-preview-try-text-btn" class="modal-preview-try-text-btn" style="display:none;">Try Text Only instead &rarr;</button>
+                        <a id="modal-preview-external-link" href="#" target="_blank" style="display:none;">Open externally &rarr;</a>
+                    </div>
+
+                    <div id="modal-reader-fallback" class="modal-reader-fallback">
+                        <p>This book can't be embedded on external sites.</p>
+                        <a id="modal-reader-fallback-link" href="#" target="_blank" class="modal-link">Open it on Internet Archive instead</a>
+                        <button id="modal-gutenberg-btn" class="modal-read-btn" style="display:none;">&#128196; Try Text Only instead</button>
+                    </div>
+
+                    <!-- Reader iframe - used for both Flip Page (Internet Archive) and Text Only (Project Gutenberg) -->
+                    <iframe id="modal-reader-frame" class="modal-reader-frame" src="" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+        <!-- Nito AI chat widget -->
+        <button id="nito-ai-toggle" class="nito-ai-toggle" aria-label="Chat with Nito AI">😊</button>
+
+        <div id="nito-ai-panel" class="nito-ai-panel">
+            <div class="nito-ai-header">
+                <span>Chat with Nito - Nito AI</span>
+                <div class="nito-ai-header-actions">
+                    <button id="nito-ai-settings-btn" class="nito-ai-icon-btn" title="API key settings">⚙</button>
+                    <button id="nito-ai-close-btn" class="nito-ai-icon-btn" title="Close">&times;</button>
+                </div>
+            </div>
+
+            <div id="nito-ai-settings" class="nito-ai-settings">
+                <label for="nito-ai-voice-key-input">ElevenLabs API key (read aloud)</label>
+                <input type="password" id="nito-ai-voice-key-input" placeholder="Paste your ElevenLabs API key here" />
+                <button id="nito-ai-key-save" class="nito-ai-key-save">Save key</button>
+                <p class="nito-ai-settings-note">Chat works automatically for everyone - no key needed. Read Aloud uses your own free <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank">ElevenLabs</a> key, stored only in this browser.</p>
+            </div>
+
+            <div id="nito-ai-messages" class="nito-ai-messages"></div>
+
+            <div class="nito-ai-input-row">
+                <input type="text" id="nito-ai-input" placeholder="Ask Nito AI about a book..." />
+                <button id="nito-ai-send-btn" class="nito-ai-send-btn">➤</button>
+            </div>
+        </div>
+
+        <!-- Notes widget (with Display Settings built in) -->
+        <button id="notes-toggle" class="notes-toggle" aria-label="My Notes">📝</button>
+
+        <div id="notes-panel" class="notes-panel">
+            <div class="notes-header">
+                <span>My Notes</span>
+                <div class="notes-header-actions">
+                    <button id="settings-toggle" class="nito-ai-icon-btn" title="Display settings">⚙</button>
+                    <button id="notes-close-btn" class="nito-ai-icon-btn" title="Close">&times;</button>
+                </div>
+            </div>
+
+            <div id="settings-panel" class="settings-panel">
+                <label for="font-family-select">Font style</label>
+                <select id="font-family-select">
+                    <option value="modern">Modern (Poppins)</option>
+                    <option value="futuristic">Futuristic (Rajdhani)</option>
+                    <option value="classic">Classic (Serif)</option>
+                    <option value="mono">Monospace</option>
+                    <option value="easyread">Easy Read (Verdana)</option>
+                </select>
+
+                <label for="font-size-select">Font size</label>
+                <select id="font-size-select">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                    <option value="xlarge">Extra Large</option>
+                </select>
+            </div>
+
+            <textarea id="notes-textarea" class="notes-textarea" placeholder="Write your notes here while you read... Nito AI can see them and help you research or answer questions about them."></textarea>
+            <div class="notes-footer">
+                <span id="notes-save-status" class="notes-save-status">Saved</span>
+                <button id="notes-ask-ai-btn" class="notes-ask-ai-btn">Ask Nito AI about these notes</button>
+            </div>
+        </div>
+
+        <script>
+            // categories shown on the home screen: [display name, Open Library subject slug]
+            const homeAbout = document.getElementById("home-about");
+
+            // Home page shows the about/credits content by default, no books
+            window.addEventListener("DOMContentLoaded", () => {
+                document.getElementById("categories-container").style.display = "none";
+                document.getElementById("books-container").style.display = "none";
+            });
+
+            document.getElementById("search-button").addEventListener("click", function () {
+                const query = document.getElementById("search-input").value;
+                if (query.trim() !== "") searchbooks(query);
+            });
+
+            // event listener for pressing enter key in the search input
+            document.getElementById("search-input").addEventListener('keypress', function (event) {
+                if (event.key === "Enter") {
+                    const query = document.getElementById("search-input").value;
+                    if (query.trim() !== "") searchbooks(query);
+                }
+            });
+
+            // function to handle fetching books data based on search query
+            const searchbooks = (query) => {
+                fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&fields=key,title,author_name,cover_i,ia`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("categories-container").style.display = "none";
+                        const resultsContainer = document.getElementById("books-container");
+                        resultsContainer.style.display = "grid";
+                        document.getElementById("page-heading").style.display = "none";
+                        document.getElementById("site-intro").style.display = "none";
+                        homeAbout.style.display = "none";
+                        navLinks.forEach(l => l.classList.remove("active"));
+                        displaybooks(data.docs, resultsContainer);
+                    })
+                    .catch(error => {
+                        console.log("error fetching data:", error);
+                    });
+            };
+
+            // function to build a single book card
+            const createBookElement = (book) => {
+                const bookElement = document.createElement("div");
+                bookElement.className = "book";
+
+                // extract book info (cover id, title, authors)
+                const coverid = book.cover_i ? book.cover_i : null;
+                const fallbackCover = 'https://placehold.co/200x300?text=No+Cover';
+                const coverUrl = coverid
+                    ? `https://covers.openlibrary.org/b/id/${coverid}-M.jpg`
+                    : fallbackCover;
+
+                // construct the html content for the book
+                // onerror: if the cover image fails/times out, swap to the placeholder automatically
+                bookElement.innerHTML = `
+        <img src="${coverUrl}" alt="${book.title}" onerror="this.onerror=null; this.src='${fallbackCover}';" />
+        <h3>${book.title}</h3>
+        <p>by ${book.author_name && book.author_name.length ? book.author_name.join(', ') : "unknown author"}</p>
+    `;
+
+                // make the card clickable - if this book has a readable copy,
+                // jump straight into the flip reader; otherwise fall back to
+                // the details view (there's nothing to flip through)
+                bookElement.style.cursor = "pointer";
+                bookElement.addEventListener("click", () => {
+                    openBookModal(book, coverUrl, true);
+                });
+
+                return bookElement;
+            };
+
+            // modal elements
+            const bookModal = document.getElementById("book-modal");
+            const modalCover = document.getElementById("modal-cover");
+            const modalTitle = document.getElementById("modal-title");
+            const modalAuthor = document.getElementById("modal-author");
+            const modalDescription = document.getElementById("modal-description");
+            const modalLink = document.getElementById("modal-link");
+            const modalReadBtn = document.getElementById("modal-read-btn");
+            const modalTextBtn = document.getElementById("modal-text-btn");
+            const modalReaderWrap = document.getElementById("modal-reader-wrap");
+            const modalReaderFrame = document.getElementById("modal-reader-frame");
+            const modalReaderFallback = document.getElementById("modal-reader-fallback");
+            const modalReaderFallbackLink = document.getElementById("modal-reader-fallback-link");
+            const modalGutenbergBtn = document.getElementById("modal-gutenberg-btn");
+            const modalDetails = document.getElementById("modal-details-view");
+            const modalPreviewNotice = document.getElementById("modal-preview-notice");
+            const modalPreviewNoticeText = document.getElementById("modal-preview-notice-text");
+            const modalPreviewTryTextBtn = document.getElementById("modal-preview-try-text-btn");
+            const modalPreviewExternalLink = document.getElementById("modal-preview-external-link");
+            const modalModeFlipBtn = document.getElementById("modal-mode-flip-btn");
+            const modalModeTextBtn = document.getElementById("modal-mode-text-btn");
+            const modalListenBtn = document.getElementById("modal-listen-btn");
+            const readerListenBtn = document.getElementById("reader-listen-btn");
+
+
+            // resolve an ia identifier that might be a string or an array
+            const getIaId = (ia) => {
+                if (!ia) return null;
+                return Array.isArray(ia) ? ia[0] : ia;
+            };
+
+            let readerFallbackTimer = null;
+
+            // open the modal and populate it with the book's info.
+            // autoOpenReader: if true and this book has a readable copy,
+            // skip straight to the flip reader instead of showing details first
+            const openBookModal = (book, coverUrl, autoOpenReader) => {
+                stopReadAloud();
+                modalCover.src = coverUrl;
+                modalCover.alt = book.title;
+                modalTitle.textContent = book.title;
+                modalAuthor.textContent = "by " + (book.author_name && book.author_name.length ? book.author_name.join(', ') : "unknown author");
+                modalDescription.textContent = "Loading description...";
+                modalLink.href = book.key ? `https://openlibrary.org${book.key}` : "#";
+
+                // reset to the details view (not the reader) each time the modal opens
+                modalReaderWrap.style.display = "none";
+                modalReaderFrame.src = "";
+                modalReaderFrame.style.display = "block";
+                modalReaderFallback.style.display = "none";
+                modalPreviewNotice.style.display = "none";
+                modalDetails.style.display = "flex";
+                bookModal.classList.remove("reader-active");
+
+                const iaId = getIaId(book.ia);
+                let currentMode = null; // "flip" or "text" - tracks what's showing in the reader right now
+
+                // Project Gutenberg only has public-domain books, but for the ones
+                // it has, the full text always works - no borrowing limits, no
+                // embed blocking. Look this title up once per book-open and cache
+                // the result, since several UI pieces need to know about it.
+                let gutenbergLookup = null;
+                const lookupGutenberg = () => {
+                    if (gutenbergLookup) return gutenbergLookup;
+                    gutenbergLookup = fetch(`https://gutendex.com/books/?search=${encodeURIComponent(book.title)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const match = data.results && data.results[0];
+                            if (!match) return null;
+                            const htmlKeys = Object.keys(match.formats || {}).filter(key => key.startsWith("text/html"));
+                            // Gutenberg serves the same book two ways: a static file-mirror
+                            // URL (gutenberg.org/files/...) which usually allows being shown
+                            // in an iframe, and the dynamic catalog page (.../ebooks/...)
+                            // which blocks framing entirely. Prefer the static one.
+                            const staticKey = htmlKeys.find(key => match.formats[key].includes("/files/"));
+                            const bestKey = staticKey || htmlKeys[0];
+                            return {
+                                htmlUrl: bestKey ? match.formats[bestKey] : null,
+                                ebookPageUrl: `https://www.gutenberg.org/ebooks/${match.id}`
+                            };
+                        })
+                        .catch(() => null);
+                    return gutenbergLookup;
+                };
+
+                // show/hide the Flip Page vs Text Only tabs inside the open reader,
+                // and mark whichever one is currently active
+                const updateModeTabs = () => {
+                    modalModeFlipBtn.style.display = iaId ? "inline-block" : "none";
+                    modalModeFlipBtn.classList.toggle("active", currentMode === "flip");
+                    modalModeTextBtn.classList.toggle("active", currentMode === "text");
+                    lookupGutenberg().then(g => {
+                        modalModeTextBtn.style.display = (g && g.htmlUrl) ? "inline-block" : "none";
+                    });
+                };
+
+                // opens the flip reader (Internet Archive) for this book
+                const openReader = () => {
+                    currentMode = "flip";
+                    modalDetails.style.display = "none";
+                    modalReaderWrap.style.display = "flex";
+                    modalReaderFallback.style.display = "none";
+                    modalPreviewNotice.style.display = "none";
+                    modalReaderFallback.querySelector("p").textContent = "This book can't be embedded on external sites.";
+                    modalReaderFallbackLink.textContent = "Open it on Internet Archive instead";
+                    modalReaderFallbackLink.href = `https://archive.org/details/${iaId}`;
+                    bookModal.classList.add("reader-active");
+                    updateModeTabs();
+
+                    // show the reader immediately, no loading screen in between
+                    modalReaderFrame.style.display = "block";
+                    modalReaderFrame.src = `https://archive.org/embed/${iaId}`;
+
+                    // archive.org's embed page loads "successfully" (fires the iframe's
+                    // load event) even for a missing/invalid identifier - it just shows
+                    // its own "item not found" message inside, and some valid items
+                    // block being embedded elsewhere and render blank. Check the
+                    // identifier against archive.org's metadata API in the background;
+                    // if it turns out to be invalid, swap to the fallback view. The
+                    // same metadata also tells us whether the item is access-restricted
+                    // (lending/limited preview only), so we can warn the reader up
+                    // front instead of them discovering it mid-book.
+                    let cameBackValid = false;
+
+                    fetch(`https://archive.org/metadata/${iaId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.metadata && data.metadata.identifier) {
+                                cameBackValid = true;
+                                if (data.metadata["access-restricted-item"] === "true") {
+                                    showLimitedPreviewNotice();
+                                }
+                            } else {
+                                showReaderFallback();
+                            }
+                        })
+                        .catch(() => {
+                            showReaderFallback();
+                        });
+
+                    clearTimeout(readerFallbackTimer);
+                    readerFallbackTimer = setTimeout(() => {
+                        if (!cameBackValid) {
+                            showReaderFallback();
+                        }
+                    }, 4000);
+                };
+
+                // opens the Text Only reader (Project Gutenberg full text).
+                // Gutenberg's static file-mirror URLs (gutenberg.org/files/...)
+                // usually allow being framed, but the dynamic catalog page
+                // (.../ebooks/...) always blocks it - and a blocked iframe still
+                // fires a normal "load" event showing the browser's own error
+                // page, with no reliable way for us to detect that after the
+                // fact. So: try to embed only when we have the static URL: fall
+                // back straight to an "open on Gutenberg" panel otherwise.
+                const openTextReader = () => {
+                    lookupGutenberg().then(g => {
+                        if (!g || !g.htmlUrl) return;
+                        currentMode = "text";
+                        clearTimeout(readerFallbackTimer);
+                        modalDetails.style.display = "none";
+                        modalReaderWrap.style.display = "flex";
+                        bookModal.classList.add("reader-active");
+                        updateModeTabs();
+
+                        const canEmbed = g.htmlUrl.includes("/files/");
+
+                        if (canEmbed) {
+                            modalReaderFallback.style.display = "none";
+                            modalReaderFrame.style.display = "block";
+                            modalReaderFrame.src = g.htmlUrl;
+                            modalPreviewNoticeText.textContent = "Reading the full text from Project Gutenberg. If the page below looks broken, use the link to open it directly.";
+                        } else {
+                            modalReaderFrame.style.display = "none";
+                            modalReaderFrame.src = "";
+                            modalReaderFallbackLink.href = g.htmlUrl;
+                            modalReaderFallbackLink.textContent = "Open the full text on Project Gutenberg";
+                            modalGutenbergBtn.style.display = "none";
+                            modalReaderFallback.querySelector("p").textContent = "Project Gutenberg's page for this book can't be shown inside another site, but the full text is one tap away:";
+                            modalReaderFallback.style.display = "flex";
+                            modalPreviewNoticeText.textContent = "Reading the full text from Project Gutenberg.";
+                        }
+
+                        modalPreviewTryTextBtn.style.display = "none";
+                        modalPreviewExternalLink.href = g.ebookPageUrl;
+                        modalPreviewExternalLink.style.display = "inline-block";
+                        modalPreviewNotice.style.display = "flex";
+                    });
+                };
+
+                // let the reader know up front that only a limited preview is
+                // available in Flip Page mode, and offer Text Only as an
+                // alternative if this title exists on Project Gutenberg
+                const showLimitedPreviewNotice = () => {
+                    modalPreviewNoticeText.textContent = "This is a limited preview \u2014 some pages are omitted.";
+                    modalPreviewExternalLink.style.display = "none";
+                    modalPreviewTryTextBtn.style.display = "none";
+                    modalPreviewNotice.style.display = "flex";
+                    lookupGutenberg().then(g => {
+                        if (g && g.htmlUrl) {
+                            modalPreviewTryTextBtn.style.display = "inline-block";
+                        }
+                    });
+                };
+
+                modalModeFlipBtn.onclick = openReader;
+                modalModeTextBtn.onclick = openTextReader;
+                modalPreviewTryTextBtn.onclick = openTextReader;
+                modalGutenbergBtn.onclick = openTextReader;
+
+                if (iaId) {
+                    modalReadBtn.style.display = "inline-block";
+                    modalReadBtn.onclick = openReader;
+                } else {
+                    modalReadBtn.style.display = "none";
+                    modalReadBtn.onclick = null;
+                }
+
+                // the Text Only button's availability depends on the async
+                // Gutenberg lookup, so hide it until we know, then reveal it
+                modalTextBtn.style.display = "none";
+                modalTextBtn.onclick = openTextReader;
+                lookupGutenberg().then(g => {
+                    modalTextBtn.style.display = (g && g.htmlUrl) ? "inline-block" : "none";
+                });
+
+                bookModal.classList.add("active");
+
+                // if this book has a readable copy and the click came from the
+                // book cover itself, skip the details view and open the reader now
+                if (autoOpenReader && iaId) {
+                    openReader();
+                }
+
+                // fetch the fuller description from the work's own page (search results don't include it)
+                if (book.key) {
+                    fetch(`https://openlibrary.org${book.key}.json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            let description = data.description || "No description available.";
+                            if (typeof description === "object" && description.value) {
+                                description = description.value;
+                            }
+                            modalDescription.textContent = description;
+                        })
+                        .catch(() => {
+                            modalDescription.textContent = "No description available.";
+                        });
+                } else {
+                    modalDescription.textContent = "No description available.";
+                }
+
+                // swap the iframe out for a clear "can't embed this one" message,
+                // with a Text Only alternative if this title exists on Gutenberg
+                const showReaderFallback = () => {
+                    modalReaderFrame.style.display = "none";
+                    modalReaderFallbackLink.style.display = "inline-block";
+                    modalGutenbergBtn.style.display = "none";
+                    modalReaderFallback.style.display = "flex";
+                    lookupGutenberg().then(g => {
+                        if (g && g.htmlUrl) {
+                            modalGutenbergBtn.style.display = "inline-block";
+                        }
+                    });
+                };
+            };
+
+            // if the iframe actually loads successfully, cancel the fallback timer
+            modalReaderFrame.addEventListener("load", () => {
+                if (modalReaderFrame.src) {
+                    clearTimeout(readerFallbackTimer);
+                }
+            });
+
+            // close the modal on close-button click, or clicking outside the box
+            document.getElementById("modal-close").addEventListener("click", () => {
+                bookModal.classList.remove("active");
+                bookModal.classList.remove("reader-active");
+                modalReaderFrame.src = ""; // stop the reader iframe when closing
+                clearTimeout(readerFallbackTimer);
+                stopReadAloud();
+            });
+
+            bookModal.addEventListener("click", (event) => {
+                if (event.target === bookModal) {
+                    bookModal.classList.remove("active");
+                    bookModal.classList.remove("reader-active");
+                    modalReaderFrame.src = "";
+                    clearTimeout(readerFallbackTimer);
+                    stopReadAloud();
+                }
+            });
+
+            // go back from the reader view to the details view
+            document.getElementById("modal-back-btn").addEventListener("click", () => {
+                modalReaderWrap.style.display = "none";
+                modalReaderFrame.src = "";
+                modalDetails.style.display = "flex";
+                bookModal.classList.remove("reader-active");
+                clearTimeout(readerFallbackTimer);
+            });
+
+            // ===== Top nav bar (Home + book categories) =====
+            const navLinks = document.querySelectorAll(".nav-link");
+            const pageHeading = document.getElementById("page-heading");
+            const siteIntro = document.getElementById("site-intro");
+            const categoriesContainerEl = document.getElementById("categories-container");
+            const booksContainerEl = document.getElementById("books-container");
+
+            // fetch and display a single broad category (from the nav bar) as a book grid
+            const loadNavCategory = (subject, label) => {
+                categoriesContainerEl.style.display = "none";
+                booksContainerEl.style.display = "grid";
+                booksContainerEl.innerHTML = "";
+                pageHeading.textContent = label;
+                pageHeading.style.display = "block";
+                siteIntro.style.display = "none";
+                homeAbout.style.display = "none";
+
+                fetch(`https://openlibrary.org/subjects/${subject}.json?limit=32`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const books = (data.works || []).map(work => ({
+                            key: work.key,
+                            title: work.title,
+                            author_name: work.authors ? work.authors.map(a => a.name) : [],
+                            cover_i: work.cover_id,
+                            ia: work.availability && work.availability.identifier ? work.availability.identifier : null
+                        }));
+                        displaybooks(books, booksContainerEl, books.length);
+                    })
+                    .catch(error => {
+                        console.log(`error fetching nav category ${label}:`, error);
+                    });
+            };
+
+            // returns to the default home view: intro + about/credits, no book listings
+            const goHome = () => {
+                pageHeading.style.display = "none";
+                siteIntro.style.display = "block";
+                homeAbout.style.display = "flex";
+                categoriesContainerEl.style.display = "none";
+                booksContainerEl.style.display = "none";
+                booksContainerEl.innerHTML = "";
+            };
+
+            navLinks.forEach(link => {
+                link.addEventListener("click", () => {
+                    navLinks.forEach(l => l.classList.remove("active"));
+                    link.classList.add("active");
+
+                    const nav = link.dataset.nav;
+                    if (nav === "home") {
+                        goHome();
+                    } else {
+                        loadNavCategory(nav, link.textContent);
+                    }
+                });
+            });
+
+            // function to display a list of books into a given container (grid or row)
+            const displaybooks = (books, container, limit = 16) => {
+                container.innerHTML = "";
+                books.slice(0, limit).forEach(book => {
+                    container.appendChild(createBookElement(book));
+                });
+            };
+
+            // ===== Nito AI chat widget (Groq API via a Cloudflare Worker proxy, + ElevenLabs voice) =====
+            // The Groq key lives on the Worker's server, never in this page's
+            // code, so it can't leak and every visitor can chat with no setup.
+            const NITO_AI_WORKER_URL = "https://cold-rice-fd04.michrich686.workers.dev";
+            const NITO_AI_VOICE_STORAGE_KEY = "nitoAiElevenLabsKey";
+            const NITO_AI_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // ElevenLabs premade voice: "Rachel"
+
+            const aiToggleBtn = document.getElementById("nito-ai-toggle");
+            const aiPanel = document.getElementById("nito-ai-panel");
+            const aiCloseBtn = document.getElementById("nito-ai-close-btn");
+            const aiSettingsBtn = document.getElementById("nito-ai-settings-btn");
+            const aiSettingsPanel = document.getElementById("nito-ai-settings");
+            const aiVoiceKeyInput = document.getElementById("nito-ai-voice-key-input");
+            const aiKeySaveBtn = document.getElementById("nito-ai-key-save");
+            const aiMessages = document.getElementById("nito-ai-messages");
+            const aiInput = document.getElementById("nito-ai-input");
+            const aiSendBtn = document.getElementById("nito-ai-send-btn");
+
+            // add a chat bubble to the message list
+            const addAiMessage = (sender, text) => {
+                const bubble = document.createElement("div");
+                bubble.className = `nito-ai-message ${sender}`;
+                bubble.textContent = text;
+                aiMessages.appendChild(bubble);
+                aiMessages.scrollTop = aiMessages.scrollHeight;
+                return bubble;
+            };
+
+            const getVoiceKey = () => localStorage.getItem(NITO_AI_VOICE_STORAGE_KEY);
+
+            // load any previously-saved ElevenLabs key into the settings field
+            const savedVoiceKey = localStorage.getItem(NITO_AI_VOICE_STORAGE_KEY);
+            if (savedVoiceKey) aiVoiceKeyInput.value = savedVoiceKey;
+
+            // toggle the whole chat panel open/closed
+            aiToggleBtn.addEventListener("click", () => {
+                const opening = !aiPanel.classList.contains("open");
+                aiPanel.classList.toggle("open");
+
+                if (opening && !aiMessages.dataset.greeted) {
+                    addAiMessage("nito", "Hi, I'm Nito AI! Ask me about a book you're reading, and I'll do my best to help. You can also tap the speaker icon on any book to have me read it aloud.");
+                    aiMessages.dataset.greeted = "true";
+                }
+            });
+
+            aiCloseBtn.addEventListener("click", () => {
+                aiPanel.classList.remove("open");
+            });
+
+            aiSettingsBtn.addEventListener("click", () => {
+                aiSettingsPanel.classList.toggle("open");
+            });
+
+            aiKeySaveBtn.addEventListener("click", () => {
+                if (aiVoiceKeyInput.value.trim()) localStorage.setItem(NITO_AI_VOICE_STORAGE_KEY, aiVoiceKeyInput.value.trim());
+                aiSettingsPanel.classList.remove("open");
+                addAiMessage("nito", "Key saved - I'm ready when you are!");
+            });
+
+            // keep a short rolling history so Nito AI can follow up on earlier
+            // questions instead of treating every message as a fresh start
+            let aiConversationHistory = [];
+
+            // build a system prompt that includes the user's current notes, so
+            // Nito AI can discuss and research what they're writing about
+            const buildAiSystemPrompt = () => {
+                const notes = notesTextarea.value.trim();
+                let prompt = "You are Nito AI, a friendly reading and research assistant built into the NITO LIBRARY website. Help the user understand, discuss, and enjoy books they're browsing or reading, and help them research topics they're interested in - explain concepts, suggest angles to explore, and answer follow-up questions. Keep answers concise, warm, and easy to read.";
+
+                if (notes) {
+                    prompt += `\n\nThe user is currently keeping the following notes in the site's Notes panel. Use them as context - answer questions about what's in the notes, help expand on ideas in them, fact-check them, or suggest related things to research, whenever relevant:\n"""\n${notes}\n"""`;
+                } else {
+                    prompt += "\n\nThe user hasn't written any notes yet. If it's relevant, you can mention that they can jot notes down in the Notes panel (the notepad icon) and you'll be able to help with those too.";
+                }
+                return prompt;
+            };
+
+            // send the typed message through the proxy Worker and render the reply
+            const sendAiMessage = (overrideText) => {
+                const text = (overrideText !== undefined ? overrideText : aiInput.value).trim();
+                if (!text) return;
+
+                addAiMessage("user", text);
+                aiInput.value = "";
+                aiConversationHistory.push({ role: "user", content: text });
+                const loadingBubble = addAiMessage("nito loading", "Nito is typing...");
+
+                fetch(NITO_AI_WORKER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        model: "llama-3.3-70b-versatile",
+                        messages: [
+                            { role: "system", content: buildAiSystemPrompt() },
+                            ...aiConversationHistory.slice(-12)
+                        ]
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        loadingBubble.remove();
+                        if (data.error) {
+                            addAiMessage("nito", `Nito AI is having trouble right now: ${data.error.message || "please try again shortly."}`);
+                            return;
+                        }
+                        const reply = data.choices && data.choices[0] && data.choices[0].message
+                            ? data.choices[0].message.content
+                            : "Sorry, I couldn't come up with a response for that.";
+                        addAiMessage("nito", reply);
+                        aiConversationHistory.push({ role: "assistant", content: reply });
+                    })
+                    .catch(() => {
+                        loadingBubble.remove();
+                        addAiMessage("nito", "Something went wrong reaching Nito AI. Please check your internet connection and try again.");
+                    });
+            };
+
+            aiSendBtn.addEventListener("click", () => sendAiMessage());
+            aiInput.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") sendAiMessage();
+            });
+
+            // ===== Read Aloud (ElevenLabs) =====
+            let readAloudAudio = null;
+            let readAloudActive = false;
+
+            const setListenButtonsState = (state) => {
+                // state: "idle" | "loading" | "playing"
+                [modalListenBtn, readerListenBtn].forEach(btn => {
+                    if (!btn) return;
+                    btn.classList.toggle("playing", state === "playing");
+                    if (state === "loading") btn.innerHTML = "&#128264; Loading voice&hellip;";
+                    else if (state === "playing") btn.innerHTML = "&#9209; Stop Reading";
+                    else btn.innerHTML = "&#128264; Read Aloud";
+                });
+            };
+
+            const stopReadAloud = () => {
+                if (readAloudAudio) {
+                    readAloudAudio.pause();
+                    readAloudAudio = null;
+                }
+                readAloudActive = false;
+                setListenButtonsState("idle");
+            };
+
+            const startReadAloud = () => {
+                const voiceKey = getVoiceKey();
+                if (!voiceKey) {
+                    aiPanel.classList.add("open");
+                    aiSettingsPanel.classList.add("open");
+                    if (!aiMessages.dataset.greeted) {
+                        addAiMessage("nito", "Hi, I'm Nito AI! Ask me about a book you're reading, and I'll do my best to help.");
+                        aiMessages.dataset.greeted = "true";
+                    }
+                    addAiMessage("nito", "Add your free ElevenLabs API key above (gear icon) and I'll be able to read books aloud for you.");
+                    return;
+                }
+
+                const textToRead = `${modalTitle.textContent}. ${modalAuthor.textContent}. ${modalDescription.textContent}`.slice(0, 2200);
+                readAloudActive = true;
+                setListenButtonsState("loading");
+
+                fetch(`https://api.elevenlabs.io/v1/text-to-speech/${NITO_AI_VOICE_ID}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "xi-api-key": voiceKey
+                    },
+                    body: JSON.stringify({
+                        text: textToRead,
+                        model_id: "eleven_multilingual_v2"
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("ElevenLabs request failed - check your API key or usage limit.");
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        if (!readAloudActive) return; // stopped while the voice was still loading
+                        readAloudAudio = new Audio(URL.createObjectURL(blob));
+                        readAloudAudio.addEventListener("ended", stopReadAloud);
+                        readAloudAudio.play();
+                        setListenButtonsState("playing");
+                    })
+                    .catch(error => {
+                        stopReadAloud();
+                        aiPanel.classList.add("open");
+                        addAiMessage("nito", error.message || "Something went wrong generating the voice.");
+                    });
+            };
+
+            const toggleReadAloud = () => {
+                if (readAloudActive) {
+                    stopReadAloud();
+                } else {
+                    startReadAloud();
+                }
+            };
+
+            modalListenBtn.addEventListener("click", toggleReadAloud);
+            readerListenBtn.addEventListener("click", toggleReadAloud);
+
+            // ===== Notes widget =====
+            const NOTES_STORAGE_KEY = "nitoNotes";
+            const notesToggleBtn = document.getElementById("notes-toggle");
+            const notesPanel = document.getElementById("notes-panel");
+            const notesCloseBtn = document.getElementById("notes-close-btn");
+            const notesTextarea = document.getElementById("notes-textarea");
+            const notesSaveStatus = document.getElementById("notes-save-status");
+            const notesAskAiBtn = document.getElementById("notes-ask-ai-btn");
+
+            // restore any previously saved notes
+            const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
+            if (savedNotes) notesTextarea.value = savedNotes;
+
+            notesToggleBtn.addEventListener("click", () => {
+                notesPanel.classList.toggle("open");
+            });
+            notesCloseBtn.addEventListener("click", () => {
+                notesPanel.classList.remove("open");
+            });
+
+            // autosave notes as the user types (debounced so it isn't saving on every keystroke)
+            let notesSaveTimer = null;
+            notesTextarea.addEventListener("input", () => {
+                notesSaveStatus.textContent = "Saving...";
+                clearTimeout(notesSaveTimer);
+                notesSaveTimer = setTimeout(() => {
+                    localStorage.setItem(NOTES_STORAGE_KEY, notesTextarea.value);
+                    notesSaveStatus.textContent = "Saved";
+                }, 500);
+            });
+
+            // jump straight into the chat and ask Nito AI to look at the current notes
+            notesAskAiBtn.addEventListener("click", () => {
+                if (!notesTextarea.value.trim()) {
+                    notesSaveStatus.textContent = "Write a note first!";
+                    setTimeout(() => { notesSaveStatus.textContent = "Saved"; }, 1800);
+                    return;
+                }
+                notesPanel.classList.remove("open");
+                aiPanel.classList.add("open");
+                if (!aiMessages.dataset.greeted) {
+                    addAiMessage("nito", "Hi, I'm Nito AI! Ask me about a book you're reading, and I'll do my best to help.");
+                    aiMessages.dataset.greeted = "true";
+                }
+                sendAiMessage("Take a look at my notes and help me research or expand on them.");
+            });
+
+            // ===== Display Settings widget (font style + size) =====
+            const FONT_FAMILY_KEY = "nitoFontFamily";
+            const FONT_SIZE_KEY = "nitoFontSize";
+
+            const fontFamilyStacks = {
+                modern: "'Poppins', sans-serif",
+                futuristic: "'Rajdhani', sans-serif",
+                classic: "Georgia, 'Times New Roman', serif",
+                mono: "'Courier New', monospace",
+                easyread: "Verdana, Arial, sans-serif"
+            };
+
+            const fontSizeValues = {
+                small: "14px",
+                medium: "16px",
+                large: "18px",
+                xlarge: "20px"
+            };
+
+            const settingsToggleBtn = document.getElementById("settings-toggle");
+            const settingsPanel = document.getElementById("settings-panel");
+            const fontFamilySelect = document.getElementById("font-family-select");
+            const fontSizeSelect = document.getElementById("font-size-select");
+
+            const applyDisplaySettings = (familyKey, sizeKey) => {
+                document.documentElement.style.setProperty("--user-font-family", fontFamilyStacks[familyKey] || fontFamilyStacks.modern);
+                document.documentElement.style.setProperty("--user-font-size", fontSizeValues[sizeKey] || fontSizeValues.medium);
+            };
+
+            // restore any previously saved display preferences
+            const savedFontFamily = localStorage.getItem(FONT_FAMILY_KEY) || "modern";
+            const savedFontSize = localStorage.getItem(FONT_SIZE_KEY) || "medium";
+            fontFamilySelect.value = savedFontFamily;
+            fontSizeSelect.value = savedFontSize;
+            applyDisplaySettings(savedFontFamily, savedFontSize);
+
+            settingsToggleBtn.addEventListener("click", () => {
+                settingsPanel.classList.toggle("open");
+            });
+
+            fontFamilySelect.addEventListener("change", () => {
+                localStorage.setItem(FONT_FAMILY_KEY, fontFamilySelect.value);
+                applyDisplaySettings(fontFamilySelect.value, fontSizeSelect.value);
+            });
+
+            fontSizeSelect.addEventListener("change", () => {
+                localStorage.setItem(FONT_SIZE_KEY, fontSizeSelect.value);
+                applyDisplaySettings(fontFamilySelect.value, fontSizeSelect.value);
+            });
+        </script>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+            :root {
+                --ink: #060a14;
+                --panel: #0d1526;
+                --panel-light: rgba(20, 32, 56, 0.65);
+                --cyan: #00e5ff;
+                --cyan-bright: #6bfaff;
+                --violet: #b026ff;
+                --violet-bright: #d17bff;
+                --gold: #00e5ff;
+                --gold-bright: #6bfaff;
+                --gold-deep: #00a8bd;
+                --paper: #eaf6ff;
+                --paper-dim: rgba(180, 220, 240, 0.72);
+                --rule: rgba(0, 229, 255, 0.35);
+                --glow: 0 0 12px rgba(0, 229, 255, 0.55), 0 0 32px rgba(176, 38, 255, 0.25);
+                --font-display: "Orbitron", sans-serif;
+                --font-body: "Poppins", sans-serif;
+                --font-utility: "Rajdhani", sans-serif;
+                --user-font-family: "Poppins", sans-serif;
+                --user-font-size: 16px;
+            }
+
+            html {
+                font-size: var(--user-font-size, 16px);
+                scroll-behavior: smooth;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: var(--font-body);
+                background-image:
+                    radial-gradient(ellipse at 20% -10%, rgba(0, 229, 255, 0.16) 0%, transparent 45%),
+                    radial-gradient(ellipse at 90% 10%, rgba(176, 38, 255, 0.14) 0%, transparent 45%),
+                    linear-gradient(180deg, rgba(4, 8, 16, 0.92) 0%, rgba(6, 10, 20, 0.88) 40%, rgba(4, 8, 16, 0.96) 100%),
+                    url('background.jpg');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+                background-position: center;
+                color: var(--paper);
+                margin: 0;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow: auto;
+                padding: 0 0 90px;
+                position: relative;
+            }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background-image:
+                    linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+                background-size: 44px 44px;
+                pointer-events: none;
+                z-index: 0;
+                mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent 70%);
+            }
+
+            .container {
+                width: 90%;
+                max-width: 1200px;
+                text-align: center;
+                margin-bottom: auto;
+                position: relative;
+                z-index: 1;
+                padding-top: 30px;
+            }
+
+            .site-header-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+                padding-bottom: 14px;
+                border-bottom: 1px solid var(--rule);
+                margin-bottom: 18px;
+            }
+
+            h1 {
+                font-family: var(--font-display);
+                font-size: 2.4rem;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                margin: 0;
+                color: var(--paper);
+                text-shadow: 0 0 14px rgba(0, 229, 255, 0.65), 0 0 34px rgba(176, 38, 255, 0.35);
+            }
+
+            .container > p {
+                font-family: var(--font-utility);
+                font-weight: 400;
+                font-size: 1.05rem;
+                color: var(--paper-dim);
+                letter-spacing: 0.03em;
+                max-width: 560px;
+                margin: 0 auto 26px;
+            }
+
+            .logo {
+                max-width: 100%;
+                height: auto;
+                width: 320px;
+                margin-bottom: 20px;
+            }
+
+            .search-container {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+                perspective: 800px;
+            }
+
+            input {
+                width: 70%;
+                padding: 16px 22px;
+                border: 1px solid rgba(0, 229, 255, 0.25);
+                border-right: none;
+                border-radius: 30px 0 0 30px;
+                font-size: 1em;
+                font-family: var(--font-body);
+                background: rgba(13, 21, 38, 0.65);
+                backdrop-filter: blur(10px);
+                color: var(--paper);
+                outline: none;
+                box-shadow: inset 0 0 12px rgba(0, 229, 255, 0.08);
+                transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            }
+
+            input::placeholder {
+                color: rgba(180, 220, 240, 0.45);
+            }
+
+            input:focus {
+                background: rgba(13, 21, 38, 0.85);
+                border-color: var(--cyan);
+                box-shadow: inset 0 0 16px rgba(0, 229, 255, 0.18), 0 0 18px rgba(0, 229, 255, 0.3);
+            }
+
+            button {
+                padding: 15px 24px;
+                border: none;
+                border-radius: 0 30px 30px 0;
+                background: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 130%);
+                color: var(--ink);
+                font-family: var(--font-body);
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 1em;
+                outline: none;
+                box-shadow: 0 0 18px rgba(0, 229, 255, 0.35);
+                transition: box-shadow 0.25s ease, transform 0.2s ease;
+            }
+
+            button:hover {
+                box-shadow: 0 0 28px rgba(0, 229, 255, 0.55), 0 0 40px rgba(176, 38, 255, 0.35);
+                transform: translateY(-2px);
+            }
+
+            #categories-container {
+                text-align: left;
+                margin: 40px 0;
+            }
+
+            .category-section {
+                margin-bottom: 36px;
+            }
+
+            .category-title {
+                font-family: var(--font-utility);
+                font-size: 0.95rem;
+                font-weight: 700;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                color: var(--cyan-bright);
+                margin: 0 0 16px 4px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+            }
+
+            .category-title::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background: linear-gradient(90deg, var(--rule), transparent);
+            }
+
+            .category-row {
+                display: flex;
+                gap: 20px;
+                overflow-x: auto;
+                padding: 10px 6px 20px;
+                scroll-behavior: smooth;
+                perspective: 1000px;
+            }
+
+            .category-row::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .category-row::-webkit-scrollbar-thumb {
+                background: rgba(0, 229, 255, 0.35);
+                border-radius: 10px;
+            }
+
+            .category-row .book {
+                flex: 0 0 auto;
+                width: 180px;
+            }
+
+            #books-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 26px;
+                margin: 40px;
+                perspective: 1200px;
+            }
+
+            .home-about {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 24px;
+                margin: 40px 0;
+                text-align: left;
+            }
+
+            .home-about-card {
+                flex: 1 1 320px;
+                background: linear-gradient(160deg, rgba(20, 32, 56, 0.75), rgba(9, 14, 26, 0.85));
+                backdrop-filter: blur(14px);
+                border: 1px solid rgba(0, 229, 255, 0.25);
+                border-radius: 4px 22px 4px 22px;
+                padding: 26px 28px;
+                box-shadow: var(--glow), inset 0 0 30px rgba(0, 229, 255, 0.04);
+                transform-style: preserve-3d;
+                transition: transform 0.4s ease, box-shadow 0.4s ease;
+            }
+
+            .home-about-card:hover {
+                transform: translateY(-6px) rotateX(2deg);
+                box-shadow: 0 0 22px rgba(0, 229, 255, 0.7), 0 0 50px rgba(176, 38, 255, 0.35);
+            }
+
+            .home-about-card h2 {
+                font-family: var(--font-display);
+                font-size: 1.15rem;
+                letter-spacing: 0.06em;
+                color: var(--cyan-bright);
+                margin: 0 0 14px;
+                text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+            }
+
+            .home-about-card p {
+                color: var(--paper-dim);
+                line-height: 1.65;
+                margin: 0 0 12px;
+                font-family: var(--font-body);
+                font-size: 0.95rem;
+            }
+
+            .home-about-card p:last-child {
+                margin-bottom: 0;
+            }
+
+            .book {
+                background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+                border-radius: 4px 4px 20px 20px;
+                box-shadow: 0 8px 28px 0 rgba(0, 0, 0, 0.45);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(0, 229, 255, 0.18);
+                border-top: 2px solid var(--cyan);
+                text-align: left;
+                transform-style: preserve-3d;
+                transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+                color: var(--paper);
+                overflow: hidden;
+                padding-bottom: 4px;
+            }
+
+            .book:hover {
+                transform: translateY(-10px) translateZ(20px) rotateX(4deg) rotateY(-3deg);
+                box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55), 0 0 26px rgba(0, 229, 255, 0.5), 0 0 48px rgba(176, 38, 255, 0.28);
+                border-color: var(--cyan-bright);
+            }
+
+            .book img {
+                width: 100%;
+                height: 300px;
+                object-fit: contain;
+                background-color: var(--paper);
+            }
+
+            .book h3 {
+                font-family: var(--font-body);
+                font-weight: 600;
+                font-size: 1.08rem;
+                margin: 12px 12px 4px;
+                line-height: 1.3;
+            }
+
+            .book p {
+                font-family: var(--font-utility);
+                font-size: 0.9em;
+                color: var(--paper-dim);
+                margin: 0 12px 12px;
+            }
+
+            footer {
+                background-color: rgba(9, 15, 20, 0.85);
+                border-top: 1px solid var(--rule);
+                width: 100%;
+                padding: 12px 0;
+                text-align: center;
+                position: fixed;
+                bottom: 0;
+                backdrop-filter: blur(6px);
+            }
+
+            footer p {
+                margin: 0;
+                font-family: var(--font-utility);
+                font-size: 0.78rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--paper-dim);
+            }
+
+            footer a {
+                color: #00e5ff;
+                text-decoration: none;
+            }
+
+            footer a:hover {
+                text-decoration: underline;
+            }
+
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(2, 4, 10, 0.82);
+                backdrop-filter: blur(4px);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .modal-overlay.active {
+                display: flex;
+            }
+
+            .modal-box {
+                background: linear-gradient(165deg, rgba(20, 32, 56, 0.88), rgba(6, 10, 20, 0.94));
+                backdrop-filter: blur(16px);
+                border-radius: 4px 4px 16px 16px;
+                max-width: 700px;
+                width: 100%;
+                max-height: 85vh;
+                overflow-y: auto;
+                position: relative;
+                padding: 34px 30px 30px;
+                box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 229, 255, 0.15);
+                border: 1px solid rgba(0, 229, 255, 0.2);
+                border-top: 2px solid var(--cyan);
+                transition: max-width 0.3s ease, height 0.3s ease;
+            }
+
+            .modal-overlay.reader-active {
+                padding: 0;
+            }
+
+            .modal-overlay.reader-active .modal-box {
+                max-width: 100vw;
+                width: 100vw;
+                height: 100vh;
+                max-height: 100vh;
+                padding: 8px;
+                border-radius: 0;
+                border: none;
+                border-top: none;
+            }
+
+            .site-nav {
+                position: sticky;
+                top: 0;
+                z-index: 900;
+                width: 100%;
+                background: rgba(6, 10, 20, 0.85);
+                backdrop-filter: blur(14px);
+                border-bottom: 1px solid var(--rule);
+                box-shadow: 0 4px 24px rgba(0, 229, 255, 0.08);
+            }
+
+            .site-nav-inner {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                gap: 24px;
+                padding: 12px 20px;
+            }
+
+            .site-nav-brand {
+                font-family: var(--font-display);
+                font-weight: 700;
+                font-size: 1.05rem;
+                letter-spacing: 0.06em;
+                color: var(--cyan-bright);
+                text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .site-nav-links {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                scrollbar-width: none;
+            }
+
+            .site-nav-links::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-link {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid transparent;
+                color: var(--paper-dim);
+                font-family: var(--font-utility);
+                font-size: 0.8rem;
+                font-weight: 600;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                white-space: nowrap;
+                padding: 8px 14px;
+                border-radius: 20px;
+                cursor: pointer;
+                transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .nav-link:hover {
+                background: rgba(0, 229, 255, 0.1);
+                border-color: rgba(0, 229, 255, 0.3);
+                color: var(--paper);
+            }
+
+            .nav-link.active {
+                background: linear-gradient(135deg, var(--cyan), var(--violet) 140%);
+                border-color: transparent;
+                color: var(--ink);
+                font-weight: 700;
+                box-shadow: 0 0 16px rgba(0, 229, 255, 0.5);
+            }
+
+            .page-heading {
+                font-family: var(--font-display);
+                font-weight: 600;
+                font-size: 1.7rem;
+                letter-spacing: 0.04em;
+                text-align: left;
+                margin: 30px 0 10px 4px;
+                color: var(--paper);
+                text-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+            }
+
+            .modal-close {
+                position: absolute;
+                top: 14px;
+                right: 18px;
+                background: none;
+                border: none;
+                color: #fff;
+                font-size: 1.8rem;
+                cursor: pointer;
+                line-height: 1;
+                z-index: 10;
+            }
+
+            .modal-close:hover {
+                color: #00e5ff;
+            }
+
+            .modal-content {
+                display: flex;
+                gap: 24px;
+                text-align: left;
+                flex-wrap: wrap;
+            }
+
+            .modal-content img {
+                width: 180px;
+                height: 260px;
+                object-fit: contain;
+                background-color: var(--paper);
+                border-radius: 6px;
+                flex-shrink: 0;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            .modal-info {
+                flex: 1;
+                min-width: 220px;
+            }
+
+            .modal-info h2 {
+                font-family: var(--font-display);
+                font-weight: 700;
+                margin: 0 0 6px;
+                font-size: 1.5rem;
+                letter-spacing: 0.02em;
+                color: var(--paper);
+                text-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+            }
+
+            .modal-info > p:first-of-type {
+                font-family: var(--font-utility);
+                font-style: italic;
+                color: var(--gold-bright);
+                font-size: 0.92rem;
+                margin: 0 0 14px;
+            }
+
+            .modal-info p {
+                color: var(--paper-dim);
+                line-height: 1.55;
+            }
+
+            .modal-link {
+                display: inline-block;
+                margin-top: 14px;
+                color: #00e5ff;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+            .modal-link:hover {
+                text-decoration: underline;
+            }
+
+            .modal-read-btn {
+                display: inline-block;
+                margin-top: 16px;
+                padding: 12px 22px;
+                border: none;
+                border-radius: 30px;
+                background-color: #00e5ff;
+                color: var(--ink);
+                font-family: var(--font-body);
+                font-weight: 600;
+                font-size: 0.95em;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .modal-read-btn:hover {
+                background-color: #00a8bd;
+            }
+
+            .modal-read-options {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .modal-text-btn {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: var(--paper);
+                border: 1px solid var(--rule);
+            }
+
+            .modal-text-btn:hover {
+                background-color: rgba(255, 255, 255, 0.18);
+                border-color: var(--gold);
+            }
+
+            .modal-reader-wrap {
+                display: none;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            .reader-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .modal-back-btn {
+                background: none;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                color: #fff;
+                padding: 8px 16px;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 0.9em;
+            }
+
+            .modal-back-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .reader-mode-tabs {
+                display: flex;
+                gap: 6px;
+            }
+
+            .reader-mode-tab {
+                display: none;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: #dcdcdc;
+                padding: 7px 14px;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 0.85em;
+            }
+
+            .reader-mode-tab:hover {
+                background: rgba(255, 255, 255, 0.16);
+            }
+
+            .reader-mode-tab.active {
+                background-color: #00e5ff;
+                border-color: #00e5ff;
+                color: var(--ink);
+                font-weight: 600;
+            }
+
+            .modal-listen-btn {
+                background: rgba(176, 38, 255, 0.15);
+                border: 1px solid rgba(176, 38, 255, 0.5);
+                color: var(--violet-bright);
+            }
+
+            .modal-listen-btn:hover {
+                background: rgba(176, 38, 255, 0.28);
+            }
+
+            .reader-listen-btn {
+                display: inline-block !important;
+                background: rgba(176, 38, 255, 0.15);
+                border: 1px solid rgba(176, 38, 255, 0.5);
+                color: var(--violet-bright);
+            }
+
+            .reader-listen-btn:hover {
+                background: rgba(176, 38, 255, 0.28);
+            }
+
+            .modal-listen-btn.playing,
+            .reader-listen-btn.playing {
+                background: linear-gradient(135deg, var(--violet), var(--cyan) 140%);
+                border-color: transparent;
+                color: var(--ink);
+                font-weight: 700;
+                animation: nito-pulse 1.6s ease-in-out infinite;
+            }
+
+            @keyframes nito-pulse {
+                0%, 100% { box-shadow: 0 0 0 0 rgba(176, 38, 255, 0.45); }
+                50% { box-shadow: 0 0 0 8px rgba(176, 38, 255, 0); }
+            }
+
+            .modal-reader-frame {
+                flex: 1;
+                width: 100%;
+                height: calc(100% - 50px);
+                border: none;
+                border-radius: 10px;
+                background: #fff;
+            }
+
+            .modal-reader-fallback {
+                display: none;
+                flex: 1;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 14px;
+                text-align: center;
+                background: var(--paper);
+                color: var(--ink);
+                font-family: var(--font-body);
+                border-radius: 10px;
+                padding: 30px;
+            }
+
+            .modal-reader-fallback p {
+                font-family: var(--font-utility);
+                font-style: italic;
+                font-size: 1.05rem;
+            }
+
+            .modal-preview-notice {
+                display: none;
+                align-items: center;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 6px 14px;
+                background: var(--gold);
+                color: var(--ink);
+                font-family: var(--font-body);
+                font-size: 0.85rem;
+                font-weight: 500;
+                text-align: center;
+                border-radius: 10px;
+                padding: 10px 16px;
+                margin-bottom: 10px;
+                flex-shrink: 0;
+            }
+
+            .modal-preview-notice a,
+            .modal-preview-try-text-btn {
+                color: #1c2b34;
+                font-weight: 700;
+                text-decoration: underline;
+                white-space: nowrap;
+                background: none;
+                border: none;
+                padding: 0;
+                font-size: 0.85rem;
+                cursor: pointer;
+                font-family: inherit;
+            }
+
+            /* ===== Nito AI chat widget ===== */
+            .nito-ai-toggle {
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                border: none;
+                background: linear-gradient(135deg, var(--cyan), var(--violet) 140%);
+                color: #fff;
+                font-size: 1.6rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 22px rgba(0, 229, 255, 0.5);
+                z-index: 1200;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .nito-ai-toggle:hover {
+                transform: scale(1.08);
+                box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 34px rgba(0, 229, 255, 0.7), 0 0 50px rgba(176, 38, 255, 0.4);
+            }
+
+            .nito-ai-panel {
+                position: fixed;
+                bottom: 96px;
+                right: 24px;
+                width: 340px;
+                max-width: calc(100vw - 32px);
+                height: 460px;
+                max-height: calc(100vh - 140px);
+                background: #1c2b34;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-top: 3px solid var(--gold);
+                border-radius: 4px 4px 16px 16px;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+                display: none;
+                flex-direction: column;
+                overflow: hidden;
+                z-index: 1200;
+                font-family: "Poppins", sans-serif;
+            }
+
+            .nito-ai-panel.open {
+                display: flex;
+            }
+
+            .nito-ai-header {
+                background: #00e5ff;
+                color: var(--ink);
+                font-family: var(--font-utility);
+                letter-spacing: 0.03em;
+                padding: 14px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-weight: 700;
+                flex-shrink: 0;
+            }
+
+            .nito-ai-header-actions {
+                display: flex;
+                gap: 6px;
+            }
+
+            .nito-ai-icon-btn {
+                background: rgba(13, 22, 29, 0.15);
+                border: none;
+                color: var(--ink);
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 0.95rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
+            }
+
+            .nito-ai-icon-btn:hover {
+                background: rgba(13, 22, 29, 0.28);
+            }
+
+            .nito-ai-settings {
+                display: none;
+                flex-direction: column;
+                gap: 8px;
+                padding: 14px 16px;
+                background: rgba(255, 255, 255, 0.06);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+                flex-shrink: 0;
+                max-height: 60%;
+                overflow-y: auto;
+            }
+
+            .nito-ai-settings.open {
+                display: flex;
+            }
+
+            .nito-ai-settings label {
+                font-size: 0.8rem;
+                color: #dcdcdc;
+                margin-top: 6px;
+            }
+
+            .nito-ai-settings label:first-child {
+                margin-top: 0;
+            }
+
+            .nito-ai-settings input {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+                font-size: 0.85rem;
+            }
+
+            .nito-ai-key-save {
+                align-self: flex-start;
+                background-color: #00e5ff;
+                color: var(--ink);
+                font-family: var(--font-body);
+                font-weight: 600;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 0.85rem;
+            }
+
+            .nito-ai-key-save:hover {
+                background-color: #00a8bd;
+            }
+
+            .nito-ai-settings-note {
+                font-size: 0.75rem;
+                color: #b7c0c6;
+                margin: 2px 0 0;
+                line-height: 1.4;
+            }
+
+            .nito-ai-settings-note a {
+                color: #6bfaff;
+            }
+
+            .nito-ai-messages {
+                flex: 1;
+                overflow-y: auto;
+                padding: 14px 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nito-ai-message {
+                max-width: 85%;
+                padding: 10px 14px;
+                border-radius: 14px;
+                font-size: 0.88rem;
+                line-height: 1.4;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+            .nito-ai-message.nito {
+                align-self: flex-start;
+                background: rgba(255, 255, 255, 0.12);
+                color: #fff;
+                border-bottom-left-radius: 4px;
+            }
+
+            .nito-ai-message.user {
+                align-self: flex-end;
+                background: #00e5ff;
+                color: var(--ink);
+                border-bottom-right-radius: 4px;
+            }
+
+            .nito-ai-message.loading {
+                opacity: 0.7;
+                font-style: italic;
+            }
+
+            .nito-ai-input-row {
+                display: flex;
+                gap: 8px;
+                padding: 12px;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                flex-shrink: 0;
+            }
+
+            .nito-ai-input-row input {
+                flex: 1;
+                padding: 10px 14px;
+                border-radius: 20px;
+                border: none;
+                background: rgba(255, 255, 255, 0.12);
+                color: #fff;
+                font-size: 0.88rem;
+                outline: none;
+            }
+
+            .nito-ai-send-btn {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                border: none;
+                background: #00e5ff;
+                color: var(--ink);
+                cursor: pointer;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            .nito-ai-send-btn:hover {
+                background-color: #00a8bd;
+            }
+
+            /* ===== Notes widget (with Display Settings built in) ===== */
+            .notes-toggle {
+                position: fixed;
+                top: 78px;
+                left: 20px;
+                width: 54px;
+                height: 54px;
+                border-radius: 50%;
+                border: none;
+                background: linear-gradient(135deg, var(--violet), var(--cyan) 140%);
+                color: #fff;
+                font-size: 1.4rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 22px rgba(176, 38, 255, 0.45);
+                z-index: 1200;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .notes-toggle:hover {
+                transform: scale(1.08);
+                box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 34px rgba(176, 38, 255, 0.65), 0 0 50px rgba(0, 229, 255, 0.35);
+            }
+
+            .notes-panel {
+                position: fixed;
+                top: 142px;
+                left: 20px;
+                width: 340px;
+                max-width: calc(100vw - 32px);
+                height: 460px;
+                max-height: calc(100vh - 170px);
+                background: #1c2b34;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-top: 3px solid var(--violet);
+                border-radius: 4px 4px 16px 16px;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+                display: none;
+                flex-direction: column;
+                overflow: hidden;
+                z-index: 1200;
+                font-family: "Poppins", sans-serif;
+            }
+
+            .notes-panel.open {
+                display: flex;
+            }
+
+            .notes-header {
+                background: linear-gradient(135deg, var(--violet), var(--cyan) 140%);
+                color: var(--ink);
+                font-family: var(--font-utility);
+                letter-spacing: 0.03em;
+                padding: 14px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-weight: 700;
+                flex-shrink: 0;
+            }
+
+            .notes-header-actions {
+                display: flex;
+                gap: 6px;
+            }
+
+            .settings-panel {
+                display: none;
+                flex-direction: column;
+                gap: 6px;
+                padding: 14px 16px;
+                background: rgba(255, 255, 255, 0.06);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+                flex-shrink: 0;
+            }
+
+            .settings-panel.open {
+                display: flex;
+            }
+
+            .settings-panel label {
+                font-family: var(--font-utility);
+                font-size: 0.78rem;
+                font-weight: 600;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                color: var(--paper-dim);
+                margin-top: 6px;
+            }
+
+            .settings-panel label:first-child {
+                margin-top: 0;
+            }
+
+            .settings-panel select {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 10px 12px;
+                border-radius: 8px;
+                border: 1px solid rgba(0, 229, 255, 0.3);
+                background: rgba(255, 255, 255, 0.06);
+                color: var(--paper);
+                font-family: var(--font-body);
+                font-size: 0.85rem;
+                outline: none;
+                cursor: pointer;
+            }
+
+            .settings-panel select:focus {
+                border-color: var(--cyan);
+                box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+            }
+
+            .notes-textarea {
+                flex: 1;
+                width: 100%;
+                box-sizing: border-box;
+                border: none;
+                resize: none;
+                padding: 16px;
+                background: rgba(255, 255, 255, 0.04);
+                color: var(--paper);
+                font-family: var(--user-font-family, var(--font-body));
+                font-size: 0.92rem;
+                line-height: 1.6;
+                outline: none;
+            }
+
+            .notes-textarea::placeholder {
+                color: rgba(180, 220, 240, 0.4);
+            }
+
+            .notes-footer {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 10px 14px;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                flex-shrink: 0;
+            }
+
+            .notes-save-status {
+                font-size: 0.72rem;
+                color: var(--paper-dim);
+                white-space: nowrap;
+            }
+
+            .notes-ask-ai-btn {
+                background: rgba(0, 229, 255, 0.12);
+                border: 1px solid rgba(0, 229, 255, 0.35);
+                color: var(--cyan-bright);
+                font-family: var(--font-utility);
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 0.03em;
+                padding: 7px 10px;
+                border-radius: 14px;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+
+            .notes-ask-ai-btn:hover {
+                background: rgba(0, 229, 255, 0.22);
+            }
+
+            @media (max-width: 480px) {
+                .nito-ai-panel {
+                    right: 16px;
+                    left: 16px;
+                    width: auto;
+                    bottom: 88px;
+                    height: min(70vh, 520px);
+                }
+
+                .nito-ai-toggle {
+                    right: 16px;
+                    bottom: 16px;
+                    width: 54px;
+                    height: 54px;
+                }
+
+                .notes-toggle {
+                    left: 16px;
+                    top: 70px;
+                    width: 48px;
+                    height: 48px;
+                    font-size: 1.2rem;
+                }
+
+                .notes-panel {
+                    left: 16px;
+                    right: 16px;
+                    width: auto;
+                    top: 124px;
+                    height: min(65vh, 480px);
+                    max-height: calc(100vh - 150px);
+                }
+
+                h1 {
+                    font-size: 1.9rem;
+                }
+
+                .site-header-row {
+                    justify-content: center;
+                    text-align: center;
+                }
+
+                input {
+                    width: 60%;
+                }
+
+                .modal-content {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                }
+
+                .modal-info {
+                    text-align: left;
+                }
+
+                .site-nav-inner {
+                    gap: 14px;
+                    padding: 10px 14px;
+                }
+
+                .site-nav-brand {
+                    display: none;
+                }
+
+                .nav-link {
+                    font-size: 0.7rem;
+                    padding: 7px 11px;
+                }
+            }
+
+            a:focus-visible,
+            button:focus-visible,
+            input:focus-visible,
+            .book:focus-visible {
+                outline: 2px solid var(--gold-bright);
+                outline-offset: 2px;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    transition-duration: 0.01ms !important;
+                    animation-duration: 0.01ms !important;
+                }
+            }
+
+            /* User display settings (font style + size) - applied to reading
+               content, not the display headings/branding, which keep their
+               themed fonts regardless of this setting */
+            body,
+            input,
+            textarea,
+            select,
+            .container > p,
+            .modal-info p,
+            .modal-description,
+            .book p,
+            .book h3,
+            .home-about-card p,
+            .nito-ai-message,
+            .nito-ai-input-row input,
+            .notes-textarea,
+            .modal-reader-fallback p,
+            .modal-preview-notice {
+                font-family: var(--user-font-family, var(--font-body));
+            }
+        </style>
+    </body>
+
+</html>
